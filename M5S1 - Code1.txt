@@ -1,0 +1,149 @@
+M5S1 - Code --Add Text
+-----------------------
+#include <iostream>
+#include <GL\glut.h>
+#include <GL\freeglut_ext.h>
+using namespace std;
+
+void textDisplay();
+
+int main(int argc, char **argv){
+
+  glutInit(&argc, argv);
+  glutCreateWindow("My First OpenGL");
+  glutInitWindowSize(1024,768);
+  //glutInitWindowPosition(0,0);
+  glutInitWindowPosition(200,50);    
+  glutDisplayFunc(textDisplay);
+  glutMainLoop();
+
+  return 0;
+}
+
+void textDisplay(){
+
+  glClear(GL_COLOR_BUFFER_BIT);
+
+  //No need for glBegin() 
+  //glBegin();		            		
+
+  const unsigned char str[] = "FEU-TECH";
+  glColor3f(0.0f, 0.0f, 1.0f);                     // set text color to blue
+  glRasterPos2f(0.0, 0.0);                         // Set raster position to (0, 0)
+  glutBitmapString(GLUT_BITMAP_HELVETICA_18, str); // Render text
+  
+  //glEnd();     --no need for glEnd()
+  glFlush();
+}
+*******************************************
+M5S2 - Code1 
+GLUT (OpenGL Utility Toolkit) callbacks are functions that you register with the GLUT library to handle specific events in an OpenGL application. These events include things like drawing the screen, resizing the window, responding to keyboard or mouse input, and more.
+
+GLUT Special Key Constants for Arrow Keys
+- Left Arrow: GLUT_KEY_LEFT
+- Right Arrow: GLUT_KEY_RIGHT
+- Up Arrow: GLUT_KEY_UP
+- Down Arrow: GLUT_KEY_DOWN
+
+Button State:
+- GLUT_DOWN: The mouse button was pressed down.
+- GLUT_UP: The mouse button was released.
+
+--------------------------------------------
+#include <iostream>
+#include <GL\glut.h>
+#include <GL\freeglut_ext.h>
+using namespace std;
+
+void textDisplay();
+void keyboardMonitor(unsigned char key, int x, int y);
+void keyboardSpecialKey(int key, int x, int y);
+void mouseMonitor(int button, int state, int x, int y);
+void animateString(int value);
+
+float px, py;
+const unsigned char str[] = "GLUT!";
+float r=0.0f, g=0.0f, b=1.0f;
+
+
+int main(int argc, char** argv) {
+
+    glutInit(&argc, argv);
+    glutCreateWindow("My First OpenGL");
+    //glutInitWindowSize(1024,768);
+    //glutInitWindowPosition(200,50);    
+    
+    glutDisplayFunc(textDisplay);
+    glutKeyboardFunc(keyboardMonitor);
+    glutSpecialFunc(keyboardSpecialKey);
+    glutMouseFunc(mouseMonitor);
+    glutTimerFunc(1000, animateString, 2); // Trigger after 2 seconds
+    glutMainLoop();
+
+    return 0;
+}
+
+void textDisplay() {
+
+    glClear(GL_COLOR_BUFFER_BIT);
+    glutSwapBuffers();               //a technique to prevent flickering and tearing during rendering
+
+    //const unsigned char str[] = "GLUT!";
+    glColor3f(r, g, b);
+    glRasterPos2f(px, py);
+    glutBitmapString(GLUT_BITMAP_TIMES_ROMAN_24, str);
+
+    glFlush();
+}
+
+void keyboardMonitor(unsigned char key, int x, int y) {
+    if (key == 'a') {
+        printf("Key 'a' pressed.\n");
+    }
+
+    switch (key) {
+    case 'l': px -= .02f; break;
+    case 'r': px += .02f; break;
+    default:   px = 0.0f;
+
+    }
+    glutPostRedisplay();
+
+}
+
+void keyboardSpecialKey(int key, int x, int y) {
+    switch (key) {
+    case GLUT_KEY_LEFT:  px -= .02f;
+        break;
+    case GLUT_KEY_RIGHT: px += .02f;
+        break;
+    case GLUT_KEY_UP:    py += .02f;
+        break;
+    case GLUT_KEY_DOWN:  py -= .02f;
+        break;
+    default:   px = 0.0f;
+
+    }
+    glutPostRedisplay();
+}
+
+void mouseMonitor(int button, int state, int x, int y) {
+    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+        printf("Left mouse button clicked at (%d, %d)\n", x, y);
+
+    }
+}
+
+void animateString(int value) {
+    printf("Timer triggered with value: %d\n", value);
+    r = 1.0f; g = 0.0f; b = 0.0f;
+
+    glutPostRedisplay();
+}
+
+
+//Lab Activity:
+//1.) The text must be displayed where i clicked the mouse
+//2.) Implement glutPassiveMotionFunc()
+//3.) Implement glutEntryFunc()
+//4.) Implement glutIdleFunc()
